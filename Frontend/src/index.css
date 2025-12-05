@@ -1,1 +1,48 @@
 @import "tailwindcss";
+.dropCard {
+  opacity: 0;
+  transform: translateY(-8px);
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  min-width: 160px;
+  background-color: #ECE7CA;
+  border: 1px solid #DACAA4;
+  color: #5A4B35;
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
+
+/* Animation */
+@keyframes dropFade {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade {
+  animation: dropFade 0.35s ease-out forwards;
+}
+.sideCard-show {
+  animation: sideIn 0.35s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+}
+.sideCard {
+  backdrop-filter: blur(3px);
+}
+
+
+/* stagger delays one by one */
+.delay-1 { animation-delay: 0.10s; }
+.delay-2 { animation-delay: 0.20s; }
+.delay-3 { animation-delay: 0.30s; }
+.delay-4 { animation-delay: 0.40s; }
+.delay-5 { animation-delay: 0.50s; }
+
+/* hover effect */
+.dropCard:hover {
+  background-color: #DCCFA9;
+  transform: translateY(-2px);
+  transition: 0.2s ease;
+}

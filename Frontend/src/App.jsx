@@ -10,19 +10,19 @@ import Contact from "./componenets/Contact";
 
 const App = () => {
   return (
-    // <div>
-    //   <Nav />
-    //   <Routes>
-    //     <Route path="/" element={<Home />} />
-    //     <Route path="/login" element={<Login />} />
-    //     <Route path="/signup" element={<Signup />} />
-    //   </Routes>
-    //   <Footer />
-    // </div>
     <div>
-      {/* <Profile/> */}
-      <Contact/>
+      <Nav />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+      </Routes>
+      {/*<Footer /> */}
     </div>
+    // <div>
+    //   {/* <Profile/> */}
+    //   <Contact/>
+    // </div>
   );
 };
 
