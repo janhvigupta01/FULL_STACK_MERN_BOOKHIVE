@@ -5,12 +5,15 @@ import { CgProfile } from "react-icons/cg";
 import { FaRegHeart } from "react-icons/fa6";
 import { IoMenu } from "react-icons/io5";
 import { FaRegBell } from "react-icons/fa";
+<<<<<<< Updated upstream
 import {MdHome} from "react-icons/md";
 import {MdInfo} from "react-icons/md";
 import {MdCategory} from "react-icons/md";
 import {RiShoppingBag3Line} from "react-icons/ri";
 import {MdContactMail} from "react-icons/md";
 
+=======
+>>>>>>> Stashed changes
 
 const Nav = () => {
   const [name, setName] = useState("");
@@ -29,30 +32,46 @@ const Nav = () => {
   };
 
   return (
+<<<<<<< Updated upstream
   <div className="w-full h-fit px-4 md:px-10 shadow-md sticky top-0 z-50 bg-[#ECE7CA] text-[#5A4B35]">
 
     <div className="h-20 flex items-center justify-between gap-3">
 
       {/* LEFT LOGO */}
+=======
+    <div className="w-full h-20 px-4 md:px-10 shadow-md flex items-center justify-between sticky top-0 z-50 
+      bg-[#F5F5DD] text-[#5A4B35]">
+
+      {/* Left Logo */}
+>>>>>>> Stashed changes
       <div className="flex items-center gap-2 text-2xl font-bold cursor-pointer">
         <HiMiniBuildingLibrary className="text-[#C8AD7E]" />
         <span className="hidden sm:block">BookHive</span>
       </div>
 
+<<<<<<< Updated upstream
       {/* SEARCH BAR SHOW ON ALL SCREEN SIZES */}
       <div className="flex items-center w-[45%] bg-[#F5F5DD] border border-[#DACAA4] rounded-full px-4 py-2 shadow-sm">
+=======
+      {/* Search Box */}
+      <div className="hidden md:flex items-center w-[40%] 
+        bg-[#ECE7CA] border border-[#DACAA4] rounded-full px-4 py-2 shadow-sm">
+
+>>>>>>> Stashed changes
         <input
           onChange={(e) => setName(e.target.value)}
           type="text"
           placeholder="Search"
           className="bg-transparent w-full outline-none text-[#5A4B35] placeholder-[#A79574]"
         />
+
         <IoMdSearch
           onClick={apiCalling}
           className="text-2xl text-[#C8AD7E] cursor-pointer hover:text-[#A79574]"
         />
       </div>
 
+<<<<<<< Updated upstream
       {/* RIGHT ITEMS */}
       <div className="flex items-center gap-6">
 
@@ -77,7 +96,29 @@ const Nav = () => {
         >
           <IoMenu />
         </div>
+=======
+      {/* Menu Items (large screens) */}
+      <div className="hidden lg:flex gap-6 text-md font-medium">
+        <span className="hover:text-[#C8AD7E] transition">Home</span>
+        <span className="hover:text-[#C8AD7E] transition">About</span>
+        <span className="hover:text-[#C8AD7E] transition">Category</span>
+        <span className="hover:text-[#C8AD7E] transition">Shop</span>
+        <span className="hover:text-[#C8AD7E] transition">Contact</span>
+>>>>>>> Stashed changes
       </div>
+
+      {/* Right Icons */}
+      <div className="flex gap-5 items-center text-xl">
+        <FaRegHeart className="cursor-pointer hover:text-[#C8AD7E]" />
+        <FaRegBell className="cursor-pointer hover:text-[#C8AD7E]" />
+        <CgProfile className="cursor-pointer hover:text-[#C8AD7E]" />
+      </div>
+
+      {/* Mobile Menu Icon */}
+      <div className="lg:hidden flex items-center text-3xl cursor-pointer text-[#5A4B35]">
+        <IoMenu />
+      </div>
+
     </div>
 
     {/* MOBILE DROPDOWN BELOW MENU ICON */}

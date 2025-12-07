@@ -7,9 +7,10 @@ import { Routes, Route } from "react-router-dom";
 import Footer from "./componenets/Footer";
 import Profile from "./componenets/Profile";
 import Contact from "./componenets/Contact";
-
+import x from "./componenets/x";
 const App = () => {
   return (
+<<<<<<< Updated upstream
     <div>
       <Nav />
       <Routes>
@@ -23,6 +24,22 @@ const App = () => {
     //   {/* <Profile/> */}
     //   <Contact/>
     // </div>
+=======
+    // <div>
+    //   <Nav />
+    //   <Routes>
+    //     <Route path="/" element={<Home />} />
+    //     <Route path="/login" element={<Login />} />
+    //     <Route path="/signup" element={<Signup />} />
+    //   </Routes>
+    //   <Footer />
+    // </div>
+   <div>
+    {/* <Profile/> */}
+    {/* <Contact/> */}
+    <x/>
+   </div>
+>>>>>>> Stashed changes
   );
 };
 
