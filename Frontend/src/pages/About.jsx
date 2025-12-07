@@ -1,6 +1,6 @@
 import React from 'react'
 
-const x = () => {
+const About = () => {
   return (
     <div>
       
@@ -8,4 +8,4 @@ const x = () => {
   )
 }
 
-export default x
+export default About
