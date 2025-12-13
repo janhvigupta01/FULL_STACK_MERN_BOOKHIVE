@@ -2,76 +2,99 @@ import React, { useEffect, useState } from "react";
 import Card from "../components/Card";
 
 const Category = () => {
-  
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // These are the categories you want to show
   const categories = [
-    { name: "Popular Books", query: "popular" },
-    { name: "Thriller", query: "thriller" },
-    { name: "Mystery", query: "mystery" },
-    { name: "Sci-Fi", query: "sci-fi" },
-    { name: "Fantasy", query: "fantasy" },
-    { name: "Biography", query: "biography" },
-    { name: "Poetry", query: "poetry" },
-    { name: "Romantic", query: "romantic" }
+    "Popular Books",
+    "Thriller",
+    "Mystery",
+    "Sci-Fi",
+    "Fantasy",
+    "Biography",
+    "Poetry",
+    "Romantic"
   ];
 
-  const [books, setBooks] = useState({});
+  // Default search terms for each category
+  const searchQuery = {
+    "Popular Books": "popular",
+    Thriller: "thriller",
+    Mystery: "mystery",
+    "Sci-Fi": "science fiction",
+    Fantasy: "fantasy",
+    Biography: "biography",
+    Poetry: "poetry",
+    Romantic: "romance"
+  };
 
+  // Fetch books once at start
   useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const responses = await Promise.all(
+          categories.map(cat =>
+            fetch(
+              `https://www.googleapis.com/books/v1/volumes?q=${searchQuery[cat]}&maxResults=8`
+            )
+          )
+        );
 
-    const fetchCategoryBooks = async () => {
-      for (let cat of categories) {
-        try {
-          const res = await fetch(
-            `https://www.googleapis.com/books/v1/volumes?q=${cat.query}&maxResults=8`
-          );
-          const data = await res.json();
+        const data = await Promise.all(responses.map(res => res.json()));
 
-          setBooks(prev => ({
-            ...prev,
-            [cat.name]: data.items || []
-          }));
-        } catch (error) {
-          console.log("Error fetching:", error);
-        }
+        // Combine result: each category will get its own array
+        let bookData = {};
+        categories.forEach((cat, i) => {
+          bookData[cat] = data[i].items || [];
+        });
+
+        setBooks(bookData);
+      } catch (error) {
+        console.log("Error:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchCategoryBooks();
-
+    fetchBooks();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center text-[#5A4B35]">
+        Loading books...
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#ECE7CA] flex justify-center p-6">
 
-      {/* Main Center Wrapper */}
-      <div className="bg-[#E8DCC2] w-full max-w-5xl p-6 rounded-xl shadow-md flex flex-col items-center">
+      {/* MAIN CENTER DIV */}
+      <div className="w-full max-w-6xl bg-[#F0E4C8] p-6 rounded-xl shadow-lg flex flex-col items-center">
 
         {categories.map((cat, index) => (
-          <div key={index} className="mb-12 w-full text-center">
+          <div key={index} className="mb-16 w-full text-center">
 
-            {/* Category Heading */}
+            {/* CATEGORY HEADING */}
             <h1 className="text-3xl font-bold text-[#5A4B35] mb-6">
-              {cat.name}
+              {cat}
             </h1>
 
-            {/* Cards Section */}
+            {/* BOOK CARDS */}
             <div className="flex justify-center gap-6 flex-wrap">
-              
-              {books[cat.name]?.length > 0 ? (
-                
-                books[cat.name].map((book, i) => (
-                  <Card
-                    key={i}
-                    title={book.volumeInfo?.title || "No Title"}
-                    author={book.volumeInfo?.authors?.[0] || "Unknown"}
-                    image={book.volumeInfo?.imageLinks?.thumbnail}
-                  />
-                ))
-              
-              ) : (
-                <p className="text-[#5A4B35]">Loading...</p>
-              )}
-
+              {books[cat].map((book, i) => (
+                <Card
+                  key={i}
+                  title={book.volumeInfo?.title}
+                  author={book.volumeInfo?.authors?.[0]}
+                  image={book.volumeInfo?.imageLinks?.thumbnail}
+                  rating={book.volumeInfo?.averageRating}
+                  category={book.volumeInfo?.categories?.[0]}
+                  description={book.volumeInfo?.description}
+                />
+              ))}
             </div>
 
           </div>

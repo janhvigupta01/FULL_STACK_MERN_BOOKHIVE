@@ -1,8 +1,47 @@
-import React from "react";
+import { useState } from "react";
 import { HiMiniBuildingLibrary } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { serrverUrl } from "../main";
+
 const Signup = () => {
   const navigate = useNavigate();
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+
+    if (!name || !email || !password) {
+      toast.error("All fields are required");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const { data } = await axios.post(
+        `${serrverUrl}/api/user/Signup`,
+        { name, email, password },
+        { withCredentials: true }
+      );
+
+      if (data.success) {
+        toast.success(data.message || "Account created successfully");
+        navigate("/login");
+      } else {
+        toast.error(data.message || "Signup failed");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Signup error");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="w-full min-h-screen flex justify-center items-center bg-black">
@@ -19,36 +58,37 @@ const Signup = () => {
         </h2>
 
         {/* Form */}
-        <form className="flex flex-col gap-4">
+        <form onSubmit={handleSignup} className="flex flex-col gap-4">
           <input
             type="text"
-            name="name"
             placeholder="Full Name"
             className="p-3 border rounded-lg outline-none focus:ring-2 focus:ring-black"
-            required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
 
           <input
             type="email"
-            name="email"
             placeholder="Email Address"
             className="p-3 border rounded-lg outline-none focus:ring-2 focus:ring-black"
-            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
 
           <input
             type="password"
-            name="password"
             placeholder="Password"
             className="p-3 border rounded-lg outline-none focus:ring-2 focus:ring-black"
-            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
 
           <button
             type="submit"
+            disabled={loading}
             className="bg-black text-white w-full py-3 rounded-lg font-semibold hover:bg-gray-900 transition"
           >
-            Sign Up
+            {loading ? "Creating Account..." : "Sign Up"}
           </button>
         </form>
 
