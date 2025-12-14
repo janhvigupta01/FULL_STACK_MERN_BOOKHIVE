@@ -14,6 +14,8 @@ import About from "./pages/About";
 import Shop from "./pages/Shop";
 import BookDetails from "./pages/BookDetails";
 import ForgotPassword from "./pages/ForgotPassword";
+import AuthorsPage from "./pages/AuthorsPage";
+import AuthorBooks from "./pages/AuthorBooks";
 
 const App = () => {
   return (
@@ -34,6 +36,8 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/category" element={<Category />} />
+        <Route path="/authors" element={<AuthorsPage />} />
+        <Route path="/author/:name" element={<AuthorBooks />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/about" element={<About />} />
         <Route path="/shop" element={<Shop />} />

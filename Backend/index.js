@@ -5,6 +5,8 @@ import userRouter from "./routes/UserRouter.js";
 import cookieParser from "cookie-parser"
 import cors from "cors";
 import authRouter from "./routes/authRoute.js";
+import AuthorRouter from "./routes/AuthorRouter.js";
+import BookAPIRouter from "./routes/BookAPIRouter.js";
 const app = express();
 
 app.use(express.json())
@@ -15,6 +17,8 @@ app.use(cors({
 }))
 
 dotenv.config();
+// Serve PDF files
+app.use("/books", express.static("public/books"));
 
 app.get("/",(req,res)=>{
     res.send("server is runnig");
@@ -23,6 +27,8 @@ app.get("/",(req,res)=>{
 let PORT = process.env.PORT;
 app.use("/api/auth", authRouter);
 app.use("/api/user/",userRouter)
+app.use("/api/search-authors", AuthorRouter);
+app.use("/api/books", BookAPIRouter);
 
 app.listen(PORT,()=>{
     connectDb();
