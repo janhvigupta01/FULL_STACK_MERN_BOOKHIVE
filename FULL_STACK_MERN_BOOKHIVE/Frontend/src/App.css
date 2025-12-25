@@ -1,0 +1,16 @@
+@keyframes feedback-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-feedback-scroll {
+  animation: feedback-scroll 28s linear infinite;
+}
+
+.animate-feedback-scroll:hover {
+  animation-play-state: paused;
+}
