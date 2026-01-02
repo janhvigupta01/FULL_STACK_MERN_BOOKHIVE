@@ -1,3 +1,4 @@
+
 export const searchAuthors = async (req, res) => {
   try {
     const query = req.query.q || "";

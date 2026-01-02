@@ -1,5 +1,26 @@
 import mongoose from "mongoose";
 
+/* 🔥 HISTORY SCHEMA (API BASED BOOKS) */
+const recentlyViewedSchema = new mongoose.Schema({
+  bookId: {
+    type: String,          // API book ID (Google Books / Open Library)
+    required: true,
+  },
+  title: {
+    type: String,
+  },
+  thumbnail: {
+    type: String,
+  },
+  authors: {
+    type: [String],
+  },
+  viewedAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
 const UserSchema = new mongoose.Schema(
   {
     name: {
@@ -29,6 +50,12 @@ const UserSchema = new mongoose.Schema(
 
     favorites: {
       type: Array,
+      default: [],
+    },
+
+    /* 🔥 HISTORY FEATURE */
+    recentlyViewed: {
+      type: [recentlyViewedSchema],
       default: [],
     },
 

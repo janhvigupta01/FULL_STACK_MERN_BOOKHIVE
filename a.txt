@@ -2,3 +2,55 @@ https://www.googleapis.com/books/v1/volumes?q=exorcist
 
 
 apikey = "AIzaSyB8QvQuCdsCXMp9jz84dPqxVKSokI6ZO8I"
+
+
+P1R2R1krLvQkuObq
+kumarikritisingh5_db_user
+mongodb+srv://kumarikritisingh5_db_user:P1R2R1krLvQkuObq@cluster0.siiiuep.mongodb.net/?appName=Cluster0
+
+
+
+{/* SEARCH RESULTS */}
+      {books.length > 0 && (
+        <div className="bg-[#0B0F1A] py-10 px-6">
+          <h2 className="text-2xl font-bold mb-6 max-w-6xl mx-auto">
+            Search Results
+          </h2>
+          <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
+            {books.map((book, index) => {
+              const info = book.volumeInfo;
+              return (
+                <div
+                  key={index}
+                  onClick={() => {
+                    setSelectedBook({
+                      id: book.id,
+                      title: info.title,
+                      authors: info.authors || ["Unknown"],
+                      image:
+                        info.imageLinks?.thumbnail ||
+                        "https://via.placeholder.com/200",
+                      previewLink: info.previewLink,
+                      description:
+                        info.description || "No description available",
+                    });
+                    setModalOpen(true);
+                  }}
+                  className="cursor-pointer bg-[#1F2937] p-3 rounded-md hover:bg-[#2A2F45]"
+                >
+                  <img
+                    src={
+                      info.imageLinks?.thumbnail ||
+                      "https://via.placeholder.com/200"
+                    }
+                    className="w-full h-[200px] object-cover rounded"
+                  />
+                  <p className="font-medium mt-2 line-clamp-2">
+                    {info.title}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}

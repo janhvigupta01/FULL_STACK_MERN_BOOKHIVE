@@ -1,104 +1,103 @@
-import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import Card from "../components/Card";
+import React, { useState } from "react";
+import axios from "axios";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 
-const BookDetails = () => {
-  const { state } = useLocation();
-  const book = state?.book;
+const Bookdetailspop = ({ open, onClose, book }) => {
+  if (!open || !book) return null;
 
-  const [showMore, setShowMore] = useState(false);
-  const [similarBooks, setSimilarBooks] = useState([]);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // Fetch similar books based on category
-  useEffect(() => {
-    if (!book?.category) return;
-
-    const fetchSimilar = async () => {
-      const res = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=${book.category}&maxResults=6`
+  const handleReadBook = async () => {
+    try {
+      await axios.post(
+        "http://localhost:4000/api/history/add",
+        {
+          bookId: book.id || book.title,
+          title: book.title,
+          thumbnail: book.image || "",
+          authors: book.authors || [],
+        },
+        { withCredentials: true }
       );
-      const data = await res.json();
-      setSimilarBooks(data.items || []);
-    };
+    } catch (err) {}
 
-    fetchSimilar();
-  }, [book]);
+    // 🔥 GOOGLE BOOKS PREVIEW ONLY
+    if (book.previewLink) {
+      window.open(book.previewLink, "_blank");
+    }
+  };
 
-  if (!book) {
-    return (
-      <div className="min-h-screen flex justify-center items-center text-2xl text-[#5A4B35]">
-        No details found.
-      </div>
-    );
-  }
+  const handleFavorite = async () => {
+    if (loading) return;
+    setLoading(true);
 
-  const shortText =
-    book.description?.slice(0, 300) + (book.description?.length > 300 ? "..." : "");
+    try {
+      await axios.post(
+        "http://localhost:4000/api/user/favorite",
+        {
+          bookId: book.id || book.title,
+          title: book.title,
+          thumbnail: book.image || "",
+          authors: book.authors || [],
+        },
+        { withCredentials: true }
+      );
+      setIsFavorite(!isFavorite);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-[#ECE7CA] flex flex-col items-center p-6">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+      <div className="bg-white w-[380px] rounded-xl shadow-xl p-5 relative">
 
-      {/* BOOK DETAILS CARD */}
-      <div className="bg-[#F0E4C8] max-w-4xl w-full rounded-2xl shadow-xl p-6 mb-12">
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-600"
+        >
+          ✖
+        </button>
+
+        <button
+          onClick={handleFavorite}
+          className="absolute top-3 left-3 text-xl text-red-500"
+        >
+          {isFavorite ? <FaHeart /> : <FaRegHeart />}
+        </button>
 
         <img
           src={book.image}
           alt={book.title}
-          className="w-60 h-80 object-cover rounded-xl mx-auto mb-6"
+          className="w-40 h-56 object-cover rounded mx-auto"
         />
 
-        <h1 className="text-3xl font-bold text-[#5A4B35] text-center mb-3">
+        <h2 className="text-xl font-bold text-center mt-4">
           {book.title}
-        </h1>
+        </h2>
 
-        <p className="text-center text-lg text-[#7A6A4A] mb-4">
-          {book.author}
+        <p className="text-center text-gray-600">
+          {book.authors?.join(", ")}
         </p>
 
-        <div className="flex justify-center gap-4 mb-4">
-          <span className="px-4 py-1 bg-[#C8AD7E] text-white rounded-full">
-            ⭐ {book.rating}
-          </span>
-          <span className="px-4 py-1 bg-[#E3D8B7] text-[#5A4B35] rounded-full">
-            {book.category}
-          </span>
-        </div>
-
-        {/* DESCRIPTION WITH READ MORE / LESS */}
-        <p className="text-[#5A4B35] leading-7 text-center whitespace-pre-wrap">
-          {showMore ? book.description : shortText}
+        <p className="text-sm text-gray-500 mt-3 line-clamp-4 text-center">
+          {book.description}
         </p>
 
-        {book.description && book.description.length > 300 && (
+        <div className="flex justify-center mt-5">
           <button
-            onClick={() => setShowMore(!showMore)}
-            className="mt-4 text-[#C8AD7E] font-semibold hover:text-[#A79574]"
+            onClick={handleReadBook}
+            className="px-4 py-2 bg-[#5A4B35] text-white rounded-md"
           >
-            {showMore ? "Read Less" : "Read More"}
+            Read Book
           </button>
-        )}
-      </div>
-
-      {/* SIMILAR BOOKS SECTION */}
-      <h2 className="text-2xl font-bold text-[#5A4B35] mb-6">
-        Similar Books You Might Like
-      </h2>
-
-      <div className="flex justify-center flex-wrap gap-6 max-w-5xl">
-        {similarBooks.map((item, index) => (
-          <Card
-            key={index}
-            title={item.volumeInfo?.title}
-            author={item.volumeInfo?.authors?.[0]}
-            image={item.volumeInfo?.imageLinks?.thumbnail}
-            rating={item.volumeInfo?.averageRating}
-            category={item.volumeInfo?.categories?.[0]}
-            description={item.volumeInfo?.description}
-          />
-        ))}
+        </div>
       </div>
     </div>
   );
 };
 
-export default BookDetails;
+export default Bookdetailspop;

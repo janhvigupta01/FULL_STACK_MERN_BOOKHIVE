@@ -2,127 +2,131 @@ import React from "react";
 
 const Contact = () => {
   return (
-    <div className="min-h-screen w-full bg-[#F5F5DD] flex justify-center items-center py-16 px-6">
+    <div className="min-h-screen w-full bg-[#030b17] flex justify-center items-center py-20 px-6">
 
-      {/* ====== FULL WIDTH CONTAINER ====== */}
-      <div className="max-w-6xl w-full flex gap-10">
+      {/* ====== MAIN CONTAINER ====== */}
+      <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
 
         {/* ================= LEFT SECTION ================= */}
-        <div className="w-1/2 flex items-center flex-col">
+        <div className="flex flex-col gap-6">
 
-          {/* Heading */}
-          <h1 className="text-5xl font-bold text-[#3C2F2F] mb-4">
+          <h1 className="text-5xl font-bold text-[#F8FAFC]">
             Contact Us
           </h1>
 
-          <p className="text-[#6F635A] text-lg w-[90%]">
-            Email us, or complete the form to learn how BookHive can help solve your book browsing & reading problems.
+          <p className="text-[#CBD5E1] text-lg leading-relaxed max-w-lg">
+            Email us or fill out the form to discover how{" "}
+            <span className="text-[#EAB308] font-semibold">BookHive</span>{" "}
+            can improve your book browsing and reading experience.
           </p>
 
-          {/* Email & phone */}
-          <div className="mt-6 text-[#3C2F2F]">
+          {/* Contact Info */}
+          <div className="mt-4 text-[#F8FAFC] space-y-1">
             <p className="text-lg font-semibold">contact@bookhive.com</p>
-            <p className="text-lg font-semibold mt-1">+91 9876543210</p>
-            <a href="#" className="underline mt-2 inline-block text-[#6F635A]">
+            <p className="text-lg font-semibold">+91 9876543210</p>
+            <a href="#" className="underline text-[#94A3B8] inline-block mt-2">
               Customer Support
             </a>
           </div>
 
-          {/* 3 Info Boxes */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-10">
+          {/* Info Boxes */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-8">
 
-            {/* Box 1 */}
-            <div>
-              <h3 className="font-semibold text-[#3C2F2F]">Customer Support</h3>
-              <p className="text-sm text-[#6F635A] mt-1">
-                Our team is available around the clock to help you with any issue.
-              </p>
-            </div>
-
-            {/* Box 2 */}
-            <div>
-              <h3 className="font-semibold text-[#3C2F2F]">Feedback & Suggestions</h3>
-              <p className="text-sm text-[#6F635A] mt-1">
-                Share your ideas. Help us build a better BookHive!
-              </p>
-            </div>
-
-            {/* Box 3 */}
-            <div>
-              <h3 className="font-semibold text-[#3C2F2F]">Media Inquiries</h3>
-              <p className="text-sm text-[#6F635A] mt-1">
-                Email us at media@bookhive.com for collaborations.
-              </p>
-            </div>
-
-          </div>
-
-        </div>
-
-        {/* ================= RIGHT CONTACT FORM ================= */}
-        <div className="w-1/2">
-          <div
-            className="bg-[#FDF8F0] rounded-2xl p-8 shadow-[0_8px_20px_rgba(165,140,100,0.25)]
-           transition-all duration-500 hover:scale-[1.01]"
-          >
-            <h2 className="text-3xl font-bold text-[#3C2F2F] mb-2">
-              Get in Touch
-            </h2>
-            <p className="text-[#6F635A] mb-6">You can reach us anytime</p>
-
-            {/* Form */}
-            <form className="space-y-4">
-
-              <div className="grid grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  placeholder="First name"
-                  className="px-4 py-3 w-full rounded-lg border border-[#E3D8B7] bg-[#F8F4EB] focus:ring-2 focus:ring-[#D1BB91] outline-none"
-                />
-                <input
-                  type="text"
-                  placeholder="Last name"
-                  className="px-4 py-3 w-full rounded-lg border border-[#E3D8B7] bg-[#F8F4EB] focus:ring-2 focus:ring-[#D1BB91] outline-none"
-                />
-              </div>
-
-              <input
-                type="email"
-                placeholder="Your email"
-                className="px-4 py-3 w-full rounded-lg border border-[#E3D8B7] bg-[#F8F4EB] focus:ring-2 focus:ring-[#D1BB91] outline-none"
-              />
-
-              <input
-                type="text"
-                placeholder="Phone number"
-                className="px-4 py-3 w-full rounded-lg border border-[#E3D8B7] bg-[#F8F4EB] focus:ring-2 focus:ring-[#D1BB91] outline-none"
-              />
-
-              <textarea
-                placeholder="How can we help?"
-                rows="4"
-                className="px-4 py-3 w-full rounded-lg border border-[#E3D8B7] bg-[#F8F4EB] focus:ring-2 focus:ring-[#D1BB91] outline-none"
-              ></textarea>
-
-              <button
-                type="submit"
-                className="w-full py-3 bg-[#D1BB91] text-white font-semibold rounded-lg hover:bg-[#c3a77c] transition-all"
+            {[
+              ["Customer Support", "24×7 assistance for all your queries and issues."],
+              ["Feedback", "Your ideas help us grow and improve."],
+              ["Media", "media@bookhive.com for collaborations."],
+            ].map(([title, desc], i) => (
+              <div
+                key={i}
+                className="
+                  rounded-xl p-4
+                  bg-[#030b17]
+                  shadow-[6px_6px_14px_#01060d,-6px_-6px_14px_#050f22]
+                "
               >
-                Submit
-              </button>
+                <h3 className="font-semibold text-[#F8FAFC]">{title}</h3>
+                <p className="text-sm text-[#94A3B8] mt-1">{desc}</p>
+              </div>
+            ))}
 
-              <p className="text-xs text-[#6F635A] text-center mt-2">
-                By contacting us, you agree to our{" "}
-                <span className="underline cursor-pointer">Terms of Service</span> &
-                <span className="underline cursor-pointer"> Privacy Policy</span>.
-              </p>
-
-            </form>
           </div>
         </div>
+
+        {/* ================= RIGHT FORM (NEOMORPHISM) ================= */}
+        <div
+          className="
+            rounded-3xl p-8
+            bg-[#030b17]
+            shadow-[10px_10px_25px_#01060d,-10px_-10px_25px_#050f22]
+          "
+        >
+          <h2 className="text-3xl font-bold text-[#F8FAFC] mb-2">
+            Get in Touch
+          </h2>
+          <p className="text-[#94A3B8] mb-6">
+            We’d love to hear from you anytime
+          </p>
+
+          <form className="space-y-4">
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <NeoInput placeholder="First name" />
+              <NeoInput placeholder="Last name" />
+            </div>
+
+            <NeoInput type="email" placeholder="Your email" />
+            <NeoInput placeholder="Phone number" />
+
+            <textarea
+              rows="4"
+              placeholder="How can we help?"
+              className="
+                w-full px-4 py-3 rounded-xl
+                bg-[#030b17] text-white placeholder-[#64748B]
+                shadow-[inset_4px_4px_8px_#01060d,inset_-4px_-4px_8px_#050f22]
+                outline-none resize-none
+              "
+            />
+
+            <button
+              type="submit"
+              className="
+                w-full py-3 rounded-xl font-semibold
+                bg-[#EAB308] text-[#020617]
+                hover:bg-[#FACC15]
+                transition shadow-md
+              "
+            >
+              Submit
+            </button>
+
+            <p className="text-xs text-[#64748B] text-center mt-3">
+              By contacting us, you agree to our{" "}
+              <span className="underline cursor-pointer">Terms</span> &{" "}
+              <span className="underline cursor-pointer">Privacy Policy</span>.
+            </p>
+
+          </form>
+        </div>
+
       </div>
     </div>
   );
 };
+
+/* 🔹 NEOMORPHIC INPUT */
+const NeoInput = ({ type = "text", placeholder }) => (
+  <input
+    type={type}
+    placeholder={placeholder}
+    className="
+      w-full px-4 py-3 rounded-xl
+      bg-[#030b17] text-white placeholder-[#64748B]
+      shadow-[inset_4px_4px_8px_#01060d,inset_-4px_-4px_8px_#050f22]
+      outline-none
+    "
+  />
+);
 
 export default Contact;

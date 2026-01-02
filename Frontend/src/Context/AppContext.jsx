@@ -6,7 +6,6 @@ const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-
   const [error, setError] = useState(null);
 
   const current = async () => {
@@ -15,8 +14,7 @@ export const AppContextProvider = ({ children }) => {
         withCredentials: true,
       });
 
-      setUser(res.data.user);
-
+      setUser(res.data.user || null);
       setError(null);
     } catch (err) {
       console.error("Current User Error:", err.response?.data || err.message);
@@ -30,7 +28,7 @@ export const AppContextProvider = ({ children }) => {
   }, []);
 
   return (
-    <AppContext.Provider value={{ user, current }}>
+    <AppContext.Provider value={{ user, setUser, current }}>
       {children}
     </AppContext.Provider>
   );

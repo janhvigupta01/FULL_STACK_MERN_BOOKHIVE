@@ -12,21 +12,29 @@ const CategoryBooks = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
 
-  /* ---------- FETCH BOOKS ---------- */
+  /* ================= FETCH BOOKS FROM GOOGLE ================= */
   useEffect(() => {
-    setLoading(true);
+    const fetchBooks = async () => {
+      try {
+        setLoading(true);
 
-    fetch(
-      `http://localhost:4000/api/category-books/${encodeURIComponent(
-        categoryName
-      )}`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        setBooks(data || []);
+        const res = await fetch(
+          `https://www.googleapis.com/books/v1/volumes?q=subject:${encodeURIComponent(
+            categoryName
+          )}&maxResults=24`
+        );
+
+        const data = await res.json();
+        setBooks(data.items || []);
+      } catch (error) {
+        console.log("Error fetching category books", error);
+        setBooks([]);
+      } finally {
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      }
+    };
+
+    fetchBooks();
   }, [categoryName]);
 
   return (
@@ -34,7 +42,7 @@ const CategoryBooks = () => {
       <div className="max-w-7xl mx-auto">
 
         {/* HEADER */}
-        <div className="flex items-center justify-between mb-16">
+        <div className="flex justify-between items-center mb-14">
           <h1 className="text-4xl font-bold text-[#592219]">
             {categoryName} Books
           </h1>
@@ -42,8 +50,8 @@ const CategoryBooks = () => {
           <button
             onClick={() => navigate(-1)}
             className="
-              px-6 py-2 rounded-xl
-              bg-[#ABA293] text-[#592219] font-semibold
+              px-6 py-2 rounded-xl font-semibold
+              bg-[#ABA293] text-[#592219]
               shadow-[6px_6px_14px_#8f887a,-6px_-6px_14px_#c7bfa9]
               hover:scale-105 transition
             "
@@ -75,12 +83,9 @@ const CategoryBooks = () => {
                       image:
                         info.imageLinks?.thumbnail ||
                         "https://via.placeholder.com/200",
-                      previewLink: info.previewLink,
                       description:
                         info.description || "No description available",
-                      language: info.language || "Unknown",
-                      category: categoryName,
-                      year: info.publishedDate?.substring(0, 4),
+                      previewLink: info.previewLink,
                     });
                     setModalOpen(true);
                   }}
@@ -100,17 +105,11 @@ const CategoryBooks = () => {
                         "https://via.placeholder.com/200x300"
                       }
                       alt={info.title}
-                      className="w-full h-full object-cover rounded-xl"
+                      className="w-full h-full object-cover"
                     />
                   </div>
 
-                  <p
-                    className="
-                      mt-4 text-sm font-semibold text-[#592219]
-                      text-center line-clamp-2
-                      group-hover:text-[#A37F5F] transition
-                    "
-                  >
+                  <p className="mt-4 text-sm font-semibold text-[#592219] text-center line-clamp-2">
                     {info.title}
                   </p>
 

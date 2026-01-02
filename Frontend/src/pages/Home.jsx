@@ -1,7 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { BookOpen, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import Bookdetailspop from "../components/Bookdetailspop";
+import UniversalSearch from "../components/UniversalSearch";
+import Explore from "../components/Explore";
+import quotes from "../assets/quotes";
+import FeedbackStrip from "../components/FeedbackStrip";
+
+/* ================= HELPERS ================= */
+
+const getDayOfYear = () => {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const diff =
+    now - start +
+    (start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000;
+
+  return Math.floor(diff / (1000 * 60 * 60 * 24));
+};
 
 const getInitials = (name) => {
   const parts = name.split(" ");
@@ -20,206 +35,278 @@ const bgColors = [
   "#73553A",
 ];
 
+const genreIcons = {
+  Fiction: "📖",
+  Romance: "❤️",
+  Mystery: "🕵️",
+  Thriller: "😱",
+  Fantasy: "🐉",
+  "Science Fiction": "🚀",
+  Biography: "👤",
+  "Self Help": "🌱",
+  History: "🏛️",
+};
+
+/* ================= HOME ================= */
+
 const Home = () => {
   const navigate = useNavigate();
 
   const [authors, setAuthors] = useState([]);
-  const [searchText, setSearchText] = useState("");
-  const [books, setBooks] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [history, setHistory] = useState([]);
 
-  // Quote section state
   const [quote, setQuote] = useState("");
   const [quoteAuthor, setQuoteAuthor] = useState("");
 
-  // Modal state
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
 
-  // Load Popular Authors
+  /* ---------- DAILY QUOTE ---------- */
+  useEffect(() => {
+    if (!quotes.length) return;
+    const dayIndex = getDayOfYear() % quotes.length;
+    setQuote(quotes[dayIndex].text);
+    setQuoteAuthor(quotes[dayIndex].author);
+  }, []);
+
+  /* ---------- AUTHORS ---------- */
   useEffect(() => {
     fetch("http://localhost:4000/api/search-authors")
       .then((res) => res.json())
-      .then((data) => setAuthors(data))
-      .catch((err) => console.log("Error fetching authors", err));
+      .then(setAuthors)
+      .catch(() => {});
   }, []);
 
-  // 🔥 FIXED: Fetch Random Quote (cache-buster added)
+  /* ---------- CATEGORIES ---------- */
   useEffect(() => {
-    fetch(`https://api.quotable.io/random?ts=${Date.now()}`)
+    fetch("http://localhost:4000/api/categories")
       .then((res) => res.json())
-      .then((data) => {
-        setQuote(data.content);
-        setQuoteAuthor(data.author);
-      })
-      .catch((err) => console.log("Error fetching quote", err));
+      .then(setCategories)
+      .catch(() => {});
   }, []);
 
-  // Search Books
-  const searchBooks = async () => {
-    if (!searchText.trim()) return;
-
-    try {
-      const res = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=${searchText}`
-      );
-      const data = await res.json();
-      setBooks(data.items || []);
-    } catch (err) {
-      console.log("Error fetching books", err);
-    }
-  };
+  /* ---------- HISTORY ---------- */
+  useEffect(() => {
+    fetch("http://localhost:4000/api/history", {
+      credentials: "include",
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.history) setHistory(data.history);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full bg-[#ABA293] text-[#592219]">
 
-      {/* HERO SECTION */}
-      <div className="bg-gradient-to-r from-[#ECE7CA] to-[#E5DDC1] py-20 px-6 text-[#5A4B35]">
-        <div className="max-w-6xl mx-auto flex flex-col items-center text-center gap-6">
-          <BookOpen size={50} className="text-[#C8AD7E]" />
-          <h1 className="text-4xl md:text-5xl font-bold tracking-wide">
-            Discover. Learn. Explore.
-          </h1>
-          <p className="text-lg md:text-xl opacity-75 max-w-xl">
-            A modern library experience built for curious readers like you.
-          </p>
+      {/* ================= HERO ================= */}
+      <Explore />
 
-          <button
-            onClick={() => navigate("/authors")}
-            className="mt-4 bg-[#5A4B35] text-white px-8 py-3 rounded-full hover:bg-[#7A664C]
-            transition flex items-center gap-2 shadow-md"
-          >
-            Explore Library <ArrowRight size={20} />
-          </button>
-        </div>
-      </div>
+      {/* ================= DAILY QUOTE ================= */}
+     <div className="py-16 px-6 text-center">
+  <div
+    className="
+      max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto
+      p-10 rounded-3xl
+      bg-[#ABA293]
+      shadow-[8px_8px_20px_#8f887a,-8px_-8px_20px_#c7bfa9]
+    "
+  >
+    <p className="text-2xl italic font-serif">
+      “{quote}”
+    </p>
+    <span className="block mt-4 text-lg font-semibold text-[#7A664C]">
+      — {quoteAuthor}
+    </span>
+  </div>
+</div>
 
-      {/* QUOTE SECTION */}
-      <div className="bg-white py-14 px-6 text-center border-y border-[#E4DCC1]">
-        <p className="text-2xl italic opacity-80 max-w-3xl mx-auto font-serif">
-          {quote || "A good book opens a world inside your mind..."}
-        </p>
 
-        {quoteAuthor && (
-          <span className="mt-3 block text-lg font-semibold text-[#C8AD7E] font-serif">
-            — {quoteAuthor}
-          </span>
-        )}
-      </div>
+      {/* ================= SEARCH ================= */}
+      <div className="py-12 px-6">
+  <div
+    className="
+      max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto
+      p-6 rounded-3xl
+      bg-[#ABA293]
+      shadow-[inset_6px_6px_14px_#8f887a,inset_-6px_-6px_14px_#c7bfa9]
+    "
+  >
+    <UniversalSearch
+      placeholder="Search books or authors"
+      rounded="full"
+      onBookSelect={(book) => {
+        setSelectedBook(book);
+        setModalOpen(true);
+      }}
+    />
+  </div>
+</div>
 
-      {/* SEARCH SECTION */}
-      <div className="bg-white py-10 px-6 border-b border-[#E4DCC1]">
-        <div className="max-w-3xl mx-auto flex gap-3">
-          <input
-            type="text"
-            placeholder="Search books (ex: Harry Potter)"
-            onChange={(e) => setSearchText(e.target.value)}
-            className="flex-1 px-4 py-3 border rounded-md shadow-sm"
-          />
 
-          <button
-            onClick={searchBooks}
-            className="px-6 py-3 bg-[#5A4B35] text-white rounded-md hover:bg-[#7A664C]"
-          >
-            Search
-          </button>
-        </div>
-      </div>
+      {/* ================= CONTINUE READING ================= */}
+      {history.length > 0 && (
+        <div className="py-20 px-6">
+          <div className="max-w-6xl mx-auto flex justify-between items-center mb-10">
+            <h2 className="text-3xl font-bold">Continue Reading</h2>
+            <Link to="/history" className="px-5 py-2
+    rounded-xl
+    text-sm font-semibold
+    text-[#7A664C]
+    bg-[#ABA293]
+    shadow-[4px_4px_10px_#8f887a,-4px_-4px_10px_#c7bfa9]
+    hover:scale-105
+    active:shadow-[inset_4px_4px_10px_#8f887a,inset_-4px_-4px_10px_#c7bfa9]
+    transition">
+              Show All →
+            </Link>
+          </div>
 
-      {/* SEARCH RESULTS */}
-      {books.length > 0 && (
-        <div className="bg-white py-10 px-6">
-          <h2 className="text-2xl font-bold mb-6 text-[#5A4B35] max-w-6xl mx-auto">
-            Search Results
-          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8 max-w-6xl mx-auto">
+            {history.slice(0, 6).map((item, index) => (
+              <div
+                key={index}
+                className="
+                  cursor-pointer p-4 rounded-2xl
+                  bg-[#ABA293]
+                  shadow-[6px_6px_14px_#8f887a,-6px_-6px_14px_#c7bfa9]
+                  hover:scale-105 transition
+                "
+                onClick={async () => {
+                  try {
+                    const res = await fetch(
+                      `https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent(
+                        item.title
+                      )}&maxResults=1`
+                    );
+                    const data = await res.json();
 
-          <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
-            {books.map((book, index) => {
-              const info = book.volumeInfo;
+                    if (data.items?.length) {
+                      const b = data.items[0].volumeInfo;
 
-              return (
-                <div
-                  key={index}
-                  onClick={() => {
-                    setSelectedBook({
-                      id: book.id,
-                      title: info.title,
-                      authors: info.authors || ["Unknown"],
-                      image:
-                        info.imageLinks?.thumbnail ||
-                        "https://via.placeholder.com/200",
-                      previewLink: info.previewLink,
-                      description:
-                        info.description || "No description available",
-                      language: info.language || "Unknown",
-                      category: info.categories?.[0] || "Unknown",
-                    });
-                    setModalOpen(true);
-                  }}
-                  className="cursor-pointer hover:shadow-xl transition border p-3 rounded-md bg-white"
-                >
-                  <img
-                    src={
-                      info.imageLinks?.thumbnail ||
-                      "https://via.placeholder.com/200"
+                      setSelectedBook({
+                        title: b.title,
+                        authors: b.authors,
+                        image: b.imageLinks?.thumbnail || item.thumbnail,
+                        description: b.description,
+                        previewLink: b.previewLink,
+                        language: b.language,
+                        category: b.categories?.[0],
+                        year: b.publishedDate?.substring(0, 4),
+                      });
+                      setModalOpen(true);
                     }
-                    alt={info.title}
-                    className="w-full h-[200px] object-cover rounded"
-                  />
-
-                  <p className="font-medium mt-2 line-clamp-2">
-                    {info.title}
-                  </p>
-
-                  <small className="text-gray-500">
-                    {info.authors?.join(", ") || "Unknown Author"}
-                  </small>
-                </div>
-              );
-            })}
+                  } catch {}
+                }}
+              >
+                <img
+                  src={item.thumbnail || "https://via.placeholder.com/200"}
+                  className="w-full h-[200px] object-cover rounded-xl"
+                />
+                <p className="mt-3 text-sm line-clamp-2">
+                  {item.title}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       )}
 
-      {/* POPULAR AUTHORS */}
-      <div className="bg-white py-16 px-6">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <h2 className="text-3xl font-bold text-[#5A4B35]">
-            Popular Authors
-          </h2>
+      {/* ================= GENRES ================= */}
+      <div className="py-20 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex justify-between items-center mb-10">
+            <h2 className="text-2xl font-semibold">Browse Genres</h2>
+            <button
+  onClick={() => navigate("/categories")}
+  className="
+    px-5 py-2
+    rounded-xl
+    text-sm font-semibold
+    text-[#7A664C]
+    bg-[#ABA293]
+    shadow-[4px_4px_10px_#8f887a,-4px_-4px_10px_#c7bfa9]
+    hover:scale-105
+    active:shadow-[inset_4px_4px_10px_#8f887a,inset_-4px_-4px_10px_#c7bfa9]
+    transition
+  "
+>
+  Show All →
+</button>
 
-          <Link to="/authors" className="text-[#B89562] hover:underline text-lg">
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
+            {categories.slice(0, 8).map((cat, index) => (
+              <div
+                key={index}
+                onClick={() => navigate(`/category/${cat.name}`)}
+                className="
+                  p-6 rounded-2xl cursor-pointer
+                  bg-[#ABA293]
+                  shadow-[6px_6px_14px_#8f887a,-6px_-6px_14px_#c7bfa9]
+                  hover:scale-105 transition
+                "
+              >
+                <div className="text-3xl mb-3">
+                  {genreIcons[cat.name] || "📚"}
+                </div>
+                <h3 className="font-semibold text-sm">{cat.name}</h3>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ================= AUTHORS ================= */}
+      <div className="py-20 px-6">
+        <div className="max-w-6xl mx-auto flex justify-between items-center mb-10">
+          <h2 className="text-3xl font-bold">Popular Authors</h2>
+          <Link to="/authors" className="px-5 py-2
+    rounded-xl
+    text-sm font-semibold
+    text-[#7A664C]
+    bg-[#ABA293]
+    shadow-[4px_4px_10px_#8f887a,-4px_-4px_10px_#c7bfa9]
+    hover:scale-105
+    active:shadow-[inset_4px_4px_10px_#8f887a,inset_-4px_-4px_10px_#c7bfa9]
+    transition">
             Show All →
           </Link>
         </div>
 
-        <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 mt-10">
-          {authors.slice(0, 6).map((author, index) => {
-            const bg = bgColors[index % bgColors.length];
-
-            return (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-10 max-w-6xl mx-auto">
+          {authors.slice(0, 6).map((author, index) => (
+            <div
+              key={index}
+              onClick={() => navigate(`/author/${author.name}`)}
+              className="flex flex-col items-center cursor-pointer group"
+            >
               <div
-                key={index}
-                className="flex flex-col items-center cursor-pointer group select-none"
-                onClick={() => navigate(`/author/${author.name}`)}
+                style={{ backgroundColor: bgColors[index % bgColors.length] }}
+                className="
+                  h-24 w-24 rounded-full flex items-center justify-center
+                  text-white text-3xl font-bold
+                  shadow-[6px_6px_14px_rgba(0,0,0,0.25),-6px_-6px_14px_rgba(255,255,255,0.15)]
+                  group-hover:scale-105 transition
+                "
               >
-                <div
-                  style={{ backgroundColor: bg }}
-                  className="h-24 w-24 rounded-full flex items-center justify-center
-                  text-white text-3xl font-bold shadow-md hover:scale-105 transition"
-                >
-                  {getInitials(author.name)}
-                </div>
-
-                <p className="mt-2 text-lg font-medium text-[#4F3A2C] group-hover:text-[#A37F5F]">
-                  {author.name}
-                </p>
+                {getInitials(author.name)}
               </div>
-            );
-          })}
+              <p className="mt-3 group-hover:text-[#A37F5F] transition">
+                {author.name}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* BOOK DETAILS MODAL */}
+      {/* ================= FEEDBACK ================= */}
+      <FeedbackStrip />
+
+      {/* ================= BOOK POPUP ================= */}
       <Bookdetailspop
         open={modalOpen}
         onClose={() => setModalOpen(false)}

@@ -39,6 +39,7 @@
 .delay-3 { animation-delay: 0.30s; }
 .delay-4 { animation-delay: 0.40s; }
 .delay-5 { animation-delay: 0.50s; }
+.delay-6 { animation-delay: 0.60s; }
 
 /* hover effect */
 .dropCard:hover {

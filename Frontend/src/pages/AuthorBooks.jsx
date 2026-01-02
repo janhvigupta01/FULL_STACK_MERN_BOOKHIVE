@@ -1,7 +1,7 @@
 // src/pages/AuthorBooks.jsx
 
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Bookdetailspop from "../components/Bookdetailspop"; // ✅ ADDED
 
 const fallbackCover =
@@ -29,13 +29,13 @@ const BookFallbackCard = ({ title, year }) => (
 );
 // --- End BookFallbackCard ---
 
-
 const AuthorBooks = () => {
   const { name } = useParams();
-  const [books, setBooks] = useState([]);
-  const [selectedBook, setSelectedBook] = useState(null); // ✅ already present
+  const navigate = useNavigate();
 
-  // Handlers for the modal
+  const [books, setBooks] = useState([]);
+  const [selectedBook, setSelectedBook] = useState(null);
+
   const handleBookClick = (book) => {
     setSelectedBook(book);
   };
@@ -54,13 +54,11 @@ const AuthorBooks = () => {
 
         if (data.items) {
           setBooks(
-            data.items.map(book => ({
-              // Card data
+            data.items.map((book) => ({
               title: book.volumeInfo.title ?? "Unknown Title",
               image: book.volumeInfo.imageLinks?.thumbnail,
               year: book.volumeInfo.publishedDate?.substring(0, 4) ?? "—",
 
-              // Popup data
               authors: book.volumeInfo.authors,
               description: book.volumeInfo.description,
               language: book.volumeInfo.language,
@@ -80,31 +78,25 @@ const AuthorBooks = () => {
     fetchBooks();
   }, [name]);
 
-  // Component for rendering a single book card
   const BookCard = ({ b, index }) => {
     const [imageFailed, setImageFailed] = useState(!b.image);
-
-    const handleImageError = () => {
-      setImageFailed(true);
-    };
 
     return (
       <div
         key={index}
-        className="flex flex-col items-center w-[150px] 
-        cursor-pointer group relative"
-        onClick={() => handleBookClick(b)} // ✅ opens popup
+        className="flex flex-col items-center w-[150px] cursor-pointer group relative"
+        onClick={() => handleBookClick(b)}
       >
         <div
           className="
-          w-full h-[225px] rounded-xl overflow-hidden relative
-          transition-all duration-300 ease-out 
-          transform 
-          shadow-xl border-2 border-transparent hover:border-4 hover:border-yellow-400/50 
-          group-hover:scale-[1.07] group-hover:-translate-y-2
-          shadow-2xl hover:shadow-[0_15px_30px_rgba(0,0,0,0.35)]
+            w-full h-[225px] rounded-xl overflow-hidden relative
+            transition-all duration-300 ease-out 
+            transform shadow-xl border-2 border-transparent
+            hover:border-4 hover:border-yellow-400/50
+            group-hover:scale-[1.07] group-hover:-translate-y-2
+            hover:shadow-[0_15px_30px_rgba(0,0,0,0.35)]
           "
-        >
+        > 
           {imageFailed ? (
             <BookFallbackCard title={b.title} year={b.year} />
           ) : (
@@ -113,15 +105,15 @@ const AuthorBooks = () => {
                 src={b.image || fallbackCover}
                 alt={b.title}
                 className="w-full h-full object-cover rounded-[10px]"
-                onError={handleImageError}
+                onError={() => setImageFailed(true)}
               />
 
               <div
                 className="
-                absolute inset-0 bg-gradient-to-t 
-                from-black/60 to-transparent opacity-0 
-                group-hover:opacity-100 transition-all duration-300
-                flex items-end justify-start p-3
+                  absolute inset-0 bg-gradient-to-t 
+                  from-black/60 to-transparent opacity-0 
+                  group-hover:opacity-100 transition-all duration-300
+                  flex items-end justify-start p-3
                 "
               >
                 <span className="text-white text-sm font-bold">
@@ -134,9 +126,9 @@ const AuthorBooks = () => {
 
         <p
           className="
-          text-[17px] font-bold text-[#3A2B21] 
-          text-center mt-4 leading-snug line-clamp-2 
-          group-hover:text-[#A67344] transition-colors
+            text-[17px] font-bold text-[#3A2B21] 
+            text-center mt-4 leading-snug line-clamp-2 
+            group-hover:text-[#A67344] transition-colors
           "
         >
           {b.title}
@@ -150,7 +142,22 @@ const AuthorBooks = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F4ED] px-10 py-16">
+    <div className="min-h-screen bg-[#F7F4ED] px-10 py-16 relative">
+
+      {/* 🔙 BACK BUTTON */}
+      <button
+        onClick={() => navigate(-1)}
+        className="
+          absolute top-8 right-10
+          px-5 py-2 rounded-full
+          bg-[#473628] text-white font-semibold
+          hover:bg-[#5a4335] transition-all
+          shadow-md
+        "
+      >
+        ← Back
+      </button>
+
       {/* Title */}
       <div className="text-center mb-16">
         <h1 className="text-6xl font-black text-[#473628] tracking-wider border-b-4 border-b-current/10 inline-block pb-1">
@@ -168,11 +175,13 @@ const AuthorBooks = () => {
             No books found for this author 😔
           </p>
         ) : (
-          books.map((b, index) => <BookCard b={b} index={index} key={index} />)
+          books.map((b, index) => (
+            <BookCard b={b} index={index} key={index} />
+          ))
         )}
       </div>
 
-      {/* ✅ BOOK DETAILS POPUP (ONLY ADDITION) */}
+      {/* BOOK DETAILS POPUP */}
       <Bookdetailspop
         open={Boolean(selectedBook)}
         book={selectedBook}
