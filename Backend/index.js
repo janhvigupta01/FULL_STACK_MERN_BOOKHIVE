@@ -1,6 +1,7 @@
 import express  from "express"
-dotenv.config();
+
 import dotenv from "dotenv"
+dotenv.config();
 import { connectDb } from "./config/conectDB.js";
 import userRouter from "./routes/UserRouter.js";
 import cookieParser from "cookie-parser"
@@ -11,7 +12,7 @@ import BookAPIRouter from "./routes/BookAPIRouter.js";
 import categoryRoutes from "./routes/categoryRouter.js";
 import historyRouter from "./routes/historyRoutes.js";
 import feedbackRoutes from "./routes/feedback.routes.js";
-
+import contactRoutes from "./routes/contactRoute.js";
 const app = express();
 
 app.use(express.json())
@@ -36,7 +37,7 @@ app.use("/api/search-authors", AuthorRouter);
 app.use("/api/books", BookAPIRouter);
 app.use("/api/history", historyRouter);
 app.use("/api", feedbackRoutes);
-
+app.use("/api/contact", contactRoutes);
 app.listen(PORT,()=>{
     connectDb();
     console.log(`server is running on this PORTt : ${PORT}`);
